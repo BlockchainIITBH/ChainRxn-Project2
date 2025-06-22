@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // getMonth() is zero-based
+  const year = date.getFullYear();
+  const time = date.toLocaleTimeString();
+  return `${day}/${month}/${year}, ${time}`;
+};
+
 const Chain = () => {
   // State to store the blockchain data
   const [blockchain, setBlockchain] = useState([]);
@@ -15,10 +24,14 @@ const Chain = () => {
       try {
         // TODO: Make a GET request to the backend endpoint /getChain
         // and store the result in blockchain state
+        const response = await axios.get("http://localhost:3005/getChain");
+        setBlockchain(response.data);
       } catch (err) {
         // TODO: Set error message if request fails
+        setError("Failed to fetch blockchain data.");
       } finally {
         // TODO: Set loading to false after request completes
+        setLoading(false);
       }
     };
 
@@ -50,20 +63,22 @@ const Chain = () => {
               </p>
               <p>
                 {/* TODO: Format and show timestamp using new Date(block.timestamp).toLocaleString() */}
-                <strong>Timestamp:</strong> { /* formatted timestamp */ }
+                <strong>Timestamp: </strong> { /* formatted timestamp */ }
+                {formatTimestamp(block.timestamp)}
               </p>
               <p>
                 <strong>Previous Hash:</strong>{" "}
                 {/* TODO: Display previous block’s hash with line wrapping */}
-                <span className="break-all text-gray-600">{ /* prevHash */ }</span>
+                <span className="break-all text-gray-600">{ /* prevHash */ }{block.prevHash}</span>
               </p>
               <p>
                 <strong>Hash:</strong>{" "}
                 {/* TODO: Display current block’s hash with line wrapping */}
-                <span className="break-all text-gray-600">{ /* hash */ }</span>
+                <span className="break-all text-gray-600">{ /* hash */ }{block.hash}</span>
               </p>
               <p>
                 <strong>Data:</strong> { /* block data */ }
+                {block.data}
               </p>
             </div>
 

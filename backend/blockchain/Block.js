@@ -26,6 +26,9 @@ class Block {
     // - Convert the result to string using .toString()
     calcHash() {
         // return sha256(...).toString();
+        return sha256(
+            this.index + this.timestamp + this.prevHash + JSON.stringify(this.data)
+        ).toString();
     }
 }
 
