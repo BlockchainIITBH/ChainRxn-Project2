@@ -14,6 +14,7 @@ const AddBlock = () => {
   // Update blockData when input field changes
   const handleDataInput = (e) => {
     // TODO: Set blockData state to the current input value
+    setBlockData(e.target.value);
   };
 
   // Function to send block data to backend and add block
@@ -22,6 +23,13 @@ const AddBlock = () => {
     // TODO: If blockData is empty, setBlockMsg to a warning and return early
 
     // TODO: Set loading state to true and clear any old messages
+    if (!blockData.trim()) {
+      setBlockMsg(" Please enter some data to create a block.");
+      return;
+    }
+
+    setLoading(true);
+    setBlockMsg("");
 
     try {
       // TODO:
@@ -35,10 +43,18 @@ const AddBlock = () => {
       // - Format a message like: "Block added successfully! Block Hash: ..."
 
       // - Set this message in blockMsg state
+      const response = await axios.post("http://localhost:3005/addBlock", {
+      data: blockData});
+
+      const blockHash = response.data.block.hash.substring(0, 7) + "...";
+      setBlockMsg(` Block added successfully! Block Hash: ${blockHash}`);
+      setBlockData(""); // Clear input after success
     } catch (error) {
       // TODO: Set an error message in blockMsg if request fails
+      setBlockMsg(" Failed to add block. Please try again.");
     } finally {
       // TODO: Set loading state to false
+      setLoading(false);
     }
   };
 

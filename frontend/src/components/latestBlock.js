@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // getMonth() is zero-based
+  const year = date.getFullYear();
+  const time = date.toLocaleTimeString();
+  return `${day}/${month}/${year}, ${time}`;
+};
+
 const GetLatestBlock = () => {
   // State to hold the latest block's data
   const [latestBlock, setLatestBlock] = useState(null);
@@ -17,10 +26,14 @@ const GetLatestBlock = () => {
       try {
         // TODO: Make a GET request to http://localhost:3005/getLatestBlock
         // and store the result in the latestBlock state
+        const response = await axios.get("http://localhost:3005/getLatestBlock");
+        setLatestBlock(response.data);
       } catch (err) {
         // TODO: If request fails, set an appropriate error message
+        setError("Unable to fetch the latest block.");
       } finally {
         // TODO: Whether success or failure, stop the loading spinner
+        setLoading(false);
       }
     };
 
@@ -50,7 +63,7 @@ const GetLatestBlock = () => {
           {/* Block Index */}
           <div className="mb-3">
             <p className="text-sm font-semibold text-gray-700">
-              <span className="text-blue-600">Block Index:</span> {/* block index */}
+              <span className="text-blue-600">Block Index:</span> {/* block index */}{latestBlock.index}
             </p>
           </div>
 
@@ -59,6 +72,7 @@ const GetLatestBlock = () => {
             <p className="text-sm font-semibold text-gray-700">
               <span className="text-blue-600">Block Timestamp:</span>{" "}
               {/* TODO: Convert latestBlock.timestamp to a readable string */}
+              {formatTimestamp(latestBlock.timestamp)}
             </p>
           </div>
 
@@ -68,7 +82,7 @@ const GetLatestBlock = () => {
               <span className="text-blue-600">Previous Hash:</span>
             </p>
             {/* TODO: Show previous hash */}
-            <p className="text-xs font-mono text-gray-600 break-all">{/* prevHash */}</p>
+            <p className="text-xs font-mono text-gray-600 break-all">{/* prevHash */}{latestBlock.prevHash}</p>
           </div>
 
           {/* Current Hash */}
@@ -77,7 +91,7 @@ const GetLatestBlock = () => {
               <span className="text-blue-600">Hash:</span>
             </p>
             {/* TODO: Show current hash */}
-            <p className="text-xs font-mono text-gray-600 break-all">{/* hash */}</p>
+            <p className="text-xs font-mono text-gray-600 break-all">{/* hash */}{latestBlock.hash}</p>
           </div>
 
           {/* Block Data */}
@@ -88,6 +102,7 @@ const GetLatestBlock = () => {
             {/* TODO: Show data inside a styled container */}
             <p className="text-xs text-gray-800 bg-blue-100 p-2 rounded-md break-all">
               {/* block data */}
+              {latestBlock.data}
             </p>
           </div>
         </div>
